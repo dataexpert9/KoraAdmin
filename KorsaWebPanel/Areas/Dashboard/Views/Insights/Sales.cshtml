@@ -1,0 +1,60 @@
+﻿@using Highsoft.Web.Mvc.Charts
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+@Scripts.Render("~/bundles/jquery")
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Sales</title>
+</head>
+<body>
+
+
+
+    <div class="right_col" role="main">
+        <div class="row">
+            @(Html.Highsoft().Highcharts(
+                new Highcharts
+                {
+
+                    Chart = new Highsoft.Web.Mvc.Charts.Chart
+                    {
+                        Width = 1087,
+                        Height = 400,
+                        Type = ChartType.Line
+                    },
+                    Series = new List<Series>
+            {
+                new LineSeries
+                {
+                    Name = "Total Earning",
+                    Data = @ViewData["sales"] as List<LineSeriesData>
+                }
+            },
+                    Title = new Title { Text = "Sales" },
+                    Credits = new Credits { Enabled = false},
+                    XAxis = new List<XAxis>
+            {
+                new XAxis
+                {
+                    Categories = @ViewData["xAxis"] as List<string>
+                },
+
+            }
+                },
+
+                    "charts"));
+
+        </div>
+    </div>
+</body>
+</html>
+
+<script>
+
+</script>

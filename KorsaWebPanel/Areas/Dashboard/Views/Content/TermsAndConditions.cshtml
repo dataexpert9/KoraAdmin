@@ -1,0 +1,66 @@
+﻿@model BasketWebPanel.ViewModels.TermsConditionsViewModel
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    #kvFileinputModal {
+        display: inline-table;
+    }
+
+    .file-drop-disabled {
+        align-content: center;
+        width: fit-content;
+    }
+</style>
+
+@using (Ajax.BeginForm("TermsAndConditions", "Content", new AjaxOptions { OnSuccess = "OnSuccessPrivacyPolicy", OnFailure = "OnFailedInsertion", LoadingElementId = "divLoader" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="right_col" role="main">
+        <div class="row">
+            <div class="x_panel ">
+                <div class="alert alert-success" id="success-alert" hidden>
+                    <button type="button" class="close" data-dismiss="alert">x</button>
+                    <strong>Success! </strong><span> </span>
+                </div>
+                <div class="alert alert-error" id="error-alert" hidden>
+                    <button type="button" class="close" data-dismiss="alert">x</button>
+                    <strong>Error! </strong> <span> </span>
+                </div>
+                <div class="x_title">
+                    <h3 class="pull-left">Terms & Conditions</h3>
+                    <div class="clearfix"></div>
+                </div>
+                <p>
+
+                </p>
+                <div class="x_content">
+                    <div class="row">
+                        <div class="col-xs-12 col-md-12 col-xs-12">
+                            @Html.TextAreaFor(x => x.TermsConditions, new { @class = "form-control", placeholder = "Terms & Conditions", id = "Terms & Conditions", @rows = 5 })
+                            @Html.ValidationMessageFor(m => m.TermsConditions, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-12 col-sm-12 col-xs-12 text-right">
+                        <button type="submit" class="btn btn-success">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+}
+@*@Scripts.Render("~/bundles/jquery")*@
+
+
+<script>
+    function OnSuccessPrivacyPolicy() {
+        $("#success-alert").fadeTo(2000, 500).slideUp(500, function () {
+            $("#success-alert").slideUp(500);
+        });
+    }
+</script>

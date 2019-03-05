@@ -1,0 +1,574 @@
+﻿@model BasketWebPanel.ViewModels.ChatHistoryViewModel
+@{
+    ViewBag.Title = "ViewUsers";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@*/////StarRatingPlugin*@
+<link href="~/Content/bootstrap-starrating/star-rating.css" rel="stylesheet" />
+
+
+<style>
+    .table caption + thead tr:first-child th,
+    .table colgroup + thead tr:first-child th,
+    .table thead:first-child tr:first-child th,
+    .table caption + thead tr:first-child td,
+    .table colgroup + thead tr:first-child td,
+    .table thead:first-child tr:first-child td {
+        border-top: 0;
+        text-align: center;
+        vertical-align: central;
+    }
+
+    p {
+        margin: 0 0 0px !important;
+    }
+
+    .btn-group {
+        padding-top: 21px;
+    }
+
+    /* Chat CSS */
+    .container {
+        max-width: 1170px;
+        margin: auto;
+    }
+
+    img {
+        max-width: 100%;
+    }
+
+    .inbox_people {
+        background: #f8f8f8 none repeat scroll 0 0;
+        float: left;
+        overflow: hidden;
+        width: 40%;
+        border-right: 1px solid #c4c4c4;
+    }
+
+    .inbox_msg {
+        border: 1px solid #c4c4c4;
+        clear: both;
+        overflow: hidden;
+    }
+
+    .top_spac {
+        margin: 20px 0 0;
+    }
+
+
+    .recent_heading {
+        float: left;
+        width: 40%;
+    }
+
+    .srch_bar {
+        display: inline-block;
+        text-align: right;
+        width: 60%;
+    }
+
+    .headind_srch {
+        padding: 10px 29px 10px 20px;
+        overflow: hidden;
+        border-bottom: 1px solid #c4c4c4;
+    }
+
+    .recent_heading h4 {
+        color: #05728f;
+        font-size: 21px;
+        margin: auto;
+    }
+
+    .srch_bar input {
+        border: 1px solid #cdcdcd;
+        border-width: 0 0 1px 0;
+        width: 80%;
+        padding: 2px 0 4px 6px;
+        background: none;
+    }
+
+    .srch_bar .input-group-addonn button {
+        background: rgba(0, 0, 0, 0) none repeat scroll 0 0;
+        border: medium none;
+        padding: 0;
+        color: #707070;
+        font-size: 18px;
+    }
+
+    .srch_bar .input-group-addonn {
+        margin: 0 0 0 -27px;
+    }
+
+    .chat_ib h5 {
+        font-size: 15px;
+        color: #464646;
+        margin: 0 0 8px 0;
+    }
+
+        .chat_ib h5 span {
+            font-size: 13px;
+            float: right;
+        }
+
+    .chat_ib p {
+        font-size: 14px;
+        color: #989898;
+        margin: auto
+    }
+
+    .chat_img {
+        float: left;
+        width: 11%;
+    }
+
+    .chat_ib {
+        float: left;
+        padding: 0 0 0 15px;
+        width: 88%;
+    }
+
+    .chat_people {
+        overflow: hidden;
+        clear: both;
+    }
+
+    .chat_list {
+        border-bottom: 1px solid #c4c4c4;
+        margin: 0;
+        padding: 18px 16px 10px;
+    }
+
+    .inbox_chat {
+        height: 550px;
+        overflow-y: scroll;
+    }
+
+    .active_chat {
+        background: #ebebeb;
+    }
+
+    .incoming_msg_img {
+        display: inline-block;
+        width: 6%;
+    }
+
+    .received_msg {
+        display: inline-block;
+        padding: 0 0 0 10px;
+        vertical-align: top;
+        width: 92%;
+    }
+
+    .received_withd_msg p {
+        background: #ebebeb none repeat scroll 0 0;
+        border-radius: 3px;
+        color: #646464;
+        font-size: 14px;
+        margin: 0;
+        padding: 5px 10px 5px 12px;
+        width: 100%;
+    }
+
+    .time_date {
+        color: #747474;
+        display: block;
+        font-size: 12px;
+        margin: 8px 0 0;
+    }
+
+    .received_withd_msg {
+        width: 57%;
+    }
+
+    .mesgs {
+        float: left;
+        padding: 30px 15px 0 25px;
+        width: 60%;
+    }
+
+    .sent_msg p {
+        background: #05728f none repeat scroll 0 0;
+        border-radius: 3px;
+        font-size: 14px;
+        margin: 0;
+        color: #fff;
+        padding: 5px 10px 5px 12px;
+        width: 100%;
+    }
+
+    .outgoing_msg {
+        overflow: hidden;
+        margin: 26px 0 26px;
+    }
+
+    .sent_msg {
+        float: right;
+        width: 46%;
+    }
+
+    .input_msg_write input {
+        background: rgba(0, 0, 0, 0) none repeat scroll 0 0;
+        border: medium none;
+        color: #4c4c4c;
+        font-size: 15px;
+        min-height: 48px;
+        width: 100%;
+    }
+
+    .type_msg {
+        border-top: 1px solid #c4c4c4;
+        position: relative;
+    }
+
+    .msg_send_btn {
+        background: #05728f none repeat scroll 0 0;
+        border: medium none;
+        border-radius: 50%;
+        color: #fff;
+        cursor: pointer;
+        font-size: 17px;
+        height: 33px;
+        position: absolute;
+        right: 0;
+        top: 11px;
+        width: 33px;
+    }
+
+    .messaging {
+        padding: 0 0 50px 0;
+    }
+
+    .msg_history {
+        height: 516px;
+        overflow-y: auto;
+    }
+    .NewMessage {
+        background: #e8d499;
+    }
+</style>
+<div class="right_col" role="main">
+    <div class="row">
+        <div class="x_panel ">
+            <div hidden class="alert alert-success" id="success-alert">
+                <button type="button" class="close" data-dismiss="alert">x</button>
+                <strong>Success!</strong><span></span>
+            </div>
+            <div class="alert alert-error" id="error-alert" hidden>
+                <button type="button" class="close" data-dismiss="alert">x</button>
+                <strong>Error! </strong> <span> </span>
+            </div>
+            <div class="x_title">
+                <h3 class="pull-left">Track Drivers</h3>                
+                <div class="clearfix"></div>
+            </div>
+            
+            <div class="x_content">
+                <div id="mapc" style=" width:100%;height:500px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@Scripts.Render("~/bundles/jquery")
+<script src="~/Content/bootstrap-starrating/star-rating.js"></script>
+<script  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAJdvFzr_NjNOBX8as4iMTvpC5eZWfTcG0&libraries=places&sensor=false"></script>
+
+
+<script>
+    var selectedUsers = [];
+    $(document).ready(function () {
+        var table = $('#datatable').DataTable({
+            "pagingType": "full_numbers",
+            columnDefs: [{
+                orderable: false,
+                className: 'select-checkbox',
+                targets: [0, 4, 5, 6, 7]
+            }],
+            select: {
+                style: 'os',
+                selector: 'td:first-child'
+            },
+            order: [
+                [1, 'desc']
+            ],
+
+        });
+
+        table.rows().every(function (rowIdx) {
+            var chkBoxCell = table.cell(rowIdx, 0).node()
+            ChangeStatusColor(rowIdx, $(chkBoxCell).data("userstatus"));
+        })
+
+
+
+
+        $(':checkbox', table.rows().nodes()).change(function () {
+            if (!$(this).prop("checked")) {
+                $("#mastercheckbox").prop("checked", false);
+            }
+        });
+    })
+
+
+    $("#mastercheckbox").click(function () {
+        var table = $('#datatable').DataTable();
+        var isChecked = this.checked;
+        $(':checkbox', table.rows().nodes()).prop('checked', isChecked);
+
+        selectedUsers = [];
+
+        table.rows().every(function (rowIdx, tableLoop, rowLoop) {
+
+            var chkBoxCell = table.cell(rowIdx, 0).node()
+
+            if (isChecked) {
+
+                var userObj = {
+                    UserId: $(chkBoxCell).attr("id"),
+                    Status: $(chkBoxCell).data("userstatus")
+                }
+
+                selectedUsers.push(userObj)
+            }
+            else {
+                selectedUsers = [];
+            }
+        });
+    });
+
+    $('#datatable').on('change', 'input[type=checkbox][id!=mastercheckbox]', function (e) {
+        var table = $('#datatable').DataTable();
+        var $check = $(this);
+        var chkBoxCell = table.cell("#" + $check.attr("userid")).node();
+
+        if ($check.is(":checked") == true) {
+
+            var checked = jQuery.inArray($check.val(), selectedUsers);
+
+
+            if (checked == -1) {
+
+                //add id to selectedDeliverers.
+                var userObj = {
+                    UserId: $(chkBoxCell).attr("id"),
+                    Status: $(chkBoxCell).data("userstatus")
+                }
+
+                selectedUsers.push(userObj);
+            }
+        } else {
+
+            selectedUsers = selectedUsers.filter(function (el) {
+                return el.UserId !== $(chkBoxCell).attr("id");
+            });
+        }
+    });
+
+    function OnSuccessUsersViewInsertion() {
+        $("#success-alert").fadeTo(2000, 500).slideUp(500, function () {
+            $("#success-alert").slideUp(500);
+        });
+    }
+
+    // Handle form submission event
+    $('#frmViewUsers').on('submit', function (e) {
+        // Prevent actual form submission
+        e.preventDefault();
+
+        var table = $('#datatable').DataTable();
+
+        var postData = {
+            selectedUsers: selectedUsers
+        };
+
+        addAntiForgeryToken(postData);
+
+        // Submit form data via Ajax
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("SaveUserStatuses", "Users")',
+            data: postData,
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                OnFailedInsertion(XMLHttpRequest, textStatus, errorThrown)
+            },
+            success: function (data) {
+                OnSuccessUsersViewInsertion()
+            }
+
+        });
+    });
+
+    function StatusChanged(index, text, value, userId) {
+
+        var table = $('#datatable').DataTable();
+
+        var btn = document.getElementById('btnUserStatus_' + index)
+        btn.innerHTML = text + ' <span class="caret"></span>';
+        $(table.cell("#" + userId).node()).data("userstatus", value);
+
+        if (document.getElementById("Users_" + index + "__IsChecked").checked == true) {
+            //remove from selectedorders
+            selectedUsers = selectedUsers.filter(function (el) {
+                return el.UserId !== userId;
+            });
+
+            //add into selectedorder
+            var userObj = {
+                UserId: userId,
+                Status: value
+            }
+
+            selectedUsers.push(userObj);
+        }
+        ChangeStatusColor(index, value);
+    }
+
+    function ChangeStatusColor(rowNum, statusType) {
+
+        if (statusType == false || statusType == "False") { // Accepted
+            //            var btn = document.getElementById("btnUserStatus_" + rowNum);
+            //          btn.style.backgroundColor = "#008080";
+            //document.getElementById("btnUserStatus_" + rowNum).style.backgroundColor = "#008080";
+           $("#btnUserStatus_" + rowNum).css("backgroundColor","#008080");
+
+        }
+        else if (statusType == true || statusType == "True") { // Rejected
+            //document.getElementById("btnUserStatus_" + rowNum).style.backgroundColor = "#e6194b";
+            $("#btnUserStatus_" + rowNum).css("backgroundColor", "#e6194b");
+
+        }
+    }
+
+    $(document).on("click", ".btnDetails", function () {
+        var userid = $(this).data('userid');
+        var url = '@Html.Raw(Url.Action("GetUser", "Users", new { UserId = "__id__" }))';
+        window.location.href = url.replace('__id__', userid);
+
+    });
+    // example caller:
+    var map;
+    var markers = [];
+    var bounds;
+    $(document).ready(function () {
+        var myLatlng = new google.maps.LatLng(30.2353412, -92.010498);
+        var myOptions = {
+            zoom: 13,
+            center: myLatlng,
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+        }
+        map = new google.maps.Map(document.getElementById("mapc"), myOptions);
+        bounds = new google.maps.LatLngBounds();
+
+        socket.emit('io:updateriderlocation', UserModelObject);
+        setInterval(function () {
+            socket.emit('io:updateriderlocation', UserModelObject);
+        }, 5000);
+
+    });
+   
+
+   
+
+    var UserModel = {
+        userId: 0,
+        userName: "Admin",
+        userType: 0,
+        rating: 0,
+    };
+
+    var UserModelObject = {
+        id: "11",
+        latitude: 33,
+        longitude: 33,
+        dropoflatitude: 33,
+        dropoflongitude: 33,
+        channel: "",
+        locationType: 0,
+        userData: UserModel,
+        orderid: 0,
+        direction: 0,
+        distance: 99999999,
+        numberofdrivers: 99999999,
+        price: 1,
+        pickupLocationTitle: "t1",
+        dropofLocationTitle: "t2",
+        driverid: 0,
+        gender: 0,
+        vehicalType: 0,
+        isCash: false
+    }; 
+
+    socket.on('listendriverlocations:0', function (data) {
+        var AllLocationIds = [];
+        var ret = JSON.parse(data); 
+        for (i = 0; i < ret.length; i++) {
+            //Do we have this marker already?
+            if (markers.hasOwnProperty(parseInt(ret[i]["userData"]["userId"]))) {
+                markers[parseInt(ret[i]["userData"]["userId"])].setPosition(new google.maps.LatLng(parseFloat(ret[i]["latitude"]), parseFloat(ret[i]["longitude"])));
+                
+            } else {
+                var positions = new google.maps.LatLng(parseFloat(ret[i]["latitude"]), parseFloat(ret[i]["longitude"]));
+                bounds.extend(positions);                
+                var marker = new google.maps.Marker({
+                    position: positions,
+                    icon: "/Content/images/car2.png",
+                    title: "Title Here",
+                    map: map,
+                    id: ret[i]["userData"]["userId"]
+                });                
+                
+                map.setCenter(marker.getPosition());
+                markers[parseInt(ret[i]["userData"]["userId"])] = marker;
+                AllLocationIds.push("f_"+parseInt(ret[i]["userData"]["userId"])+"_f");
+            }
+        }
+        // Remove Marker
+        for (var j = 0; j < count(markers); j++) {
+            if (AllLocationIds.indexOf("f_" + parseInt(markers[j].id) + "_f") < 0) {
+                markers[i].setMap(null);
+            }           
+        }
+
+        //map.fitBounds(bounds);
+
+        //for (i = 0; i < ret.length; i++) {
+        //    if (i == 2 || i == 1 || i == 0 || i == 3 || i == 5 || i == 6 || i == 7) {
+        //        var position = new google.maps.LatLng(parseFloat(ret[i]["latitude"]), parseFloat(ret[i]["longitude"]));
+        //        bounds.extend(position);
+
+        //        marker = new google.maps.Marker({
+        //            position: position,
+        //            map: map,
+        //            icon: "/Content/images/car2.png",
+        //            title: "Title Here",
+        //        });
+        //        markers.push(marker);
+
+        //        //google.maps.event.addListener(marker, 'click', (function (marker, i) {
+        //        //    return function () {
+        //        //        infowindow.setContent(ret[i]["userData"]["userId"]);
+        //        //        infowindow.open(map, marker);
+        //        //        fixeup();
+        //        //    }
+        //        //})(marker, i));
+        //    }
+        //}
+        //map.fitBounds(bounds);
+        //// Override our map zoom level once our fitBounds function runs (Make sure it only runs once)
+        //var boundsListener = google.maps.event.addListener((map), 'bounds_changed', function (event) {
+        //    this.setZoom(12);
+        //    google.maps.event.removeListener(boundsListener);
+        //});
+
+    });
+    socket.on('disconnect', function () { });    
+    function count(array) {
+        var c = 0;
+        for (i in array) // in returns key, not object
+            if (array[i] != undefined)
+                c++;
+
+        return c;
+    }
+</script>

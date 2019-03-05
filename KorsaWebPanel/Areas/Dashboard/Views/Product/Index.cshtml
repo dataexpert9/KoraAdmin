@@ -1,0 +1,443 @@
+﻿@model BasketWebPanel.Areas.Dashboard.Models.AddProductViewModel
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="right_col" role="main">
+    <div class="row">
+        <input id="prodId" type="hidden" name="Product.Id" value="@Model.Product.Id" />
+        <div id="AddUpdateDiv" class="col-md-12 col-xs-12">
+            <div class="alert alert-success" id="success-alert" hidden>
+                <button type="button" class="close" data-dismiss="alert">x</button>
+                <strong>Success! </strong><span> </span>
+            </div>
+            <div class="alert alert-error" id="error-alert" hidden>
+                <button type="button" class="close" data-dismiss="alert">x</button>
+                <strong>Error! </strong> <span> </span>
+            </div>
+            <style>
+                input[type=number]::-webkit-inner-spin-button,
+                input[type=number]::-webkit-outer-spin-button {
+                    -webkit-appearance: none;
+                    -moz-appearance: none;
+                    appearance: none;
+                    margin: 0;
+                }
+
+                fieldset {
+                    padding: .35em .625em .75em;
+                    margin: 0 2px;
+                    border: 1px solid #c0c0c0;
+                }
+
+                legend {
+                    font-size: 13px;
+                }
+            </style>
+            @using (Ajax.BeginForm("Index", "Product", new AjaxOptions { OnSuccess = "OnSuccessProductInsertion", OnFailure = "OnFailedInsertion", LoadingElementId = "divLoader" }, new { enctype = "multipart/form-data" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="x_panel">
+                    <div class="x_title">
+                        @if (Model.Product.Id == 0)
+                        {
+                            <h3>Add New Product</h3>
+                        }
+                        else
+                        {
+                            <h3>Edit Product</h3>
+                        }
+
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+                        <br />
+                        <input type="hidden" name="Product.Id" value="@Model.Product.Id" />
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+                                <label>Product Name</label>
+                                <input type="text" autofocus data-val="true" class="form-control input-validation-error" name="Product.Name" id="ProductName" data-val-required="This field is required" placeholder="Product Name" value="@Model.Product.Name">
+                                @Html.ValidationMessageFor(m => m.Product.Name, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+                                <label>Product Price</label>
+                                @* <input type="text" data-val="true" class="form-control input-validation-error" name="Price" id="Price" data-val-required="Price is required" placeholder="Product Price" value="@Model.Price">*@
+                                @Html.TextBoxFor(x => x.Product.Price, new { @class = "form-control", @id = "Price", @placeholder = "Product Price", @type = "text" })
+                                @Html.ValidationMessageFor(m => m.Product.Price, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+                                <label>Category</label>
+                                @Html.DropDownList("Product.Category_Id", new SelectList(Model.CategoryOptions.Items,
+                            "value", "Text", Model.CategoryOptions.SelectedValue), new { @class = "form-control" })
+                                @Html.ValidationMessageFor(x => x.Product.Category_Id, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback" style="margin-top:27px;">
+                                <label for="Product_IsPopular">Is Popular</label>
+                                @Html.CheckBoxFor(x => x.Product.IsPopular, new { @class = "form-check-input" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12 col-xs-12">
+                                <!-- image-preview-filename input [CUT FROM HERE]-->
+                                @*@if (Model.Product.Id == 0)
+                                    {*@
+                                <div id="UploadImage">
+                                    <label>Upload Product Image</label>
+                                    <div>
+                                        <div class="input-group image-preview" style="margin-bottom:0px">
+                                            <input type="text" id="txtImageUrl" class="form-control image-preview-filename" readonly> <!-- don't give a name === doesn't send on POST/GET -->
+                                            <span class="text-danger field-validation-error" style="display:none;"><span for="txtImageUrl" class="">Please select an image</span></span>
+                                            <span class="input-group-btn">
+                                                <!-- image-preview-clear button -->
+                                                @*<button type="button" id="clearImage" class="btn btn-default image-preview-clear" onclick="ClearImage()" style="display:none;">
+                                                        <span class="glyphicon glyphicon-remove"></span> Clear
+                                                    </button>*@
+                                                <!-- image-preview-input -->
+                                                <div class="btn btn-default image-preview-input">
+                                                    <span class="glyphicon glyphicon-folder-open"></span>
+                                                    <span class="image-preview-input-title">Browse</span>
+                                                    <input type="file" multiple accept="image/png, image/jpeg, image/gif" onchange="UploadImage()" id="fileInput" name="Image" /> <!-- rename it -->
+                                                </div>
+                                            </span>
+                                        </div>
+                                        @Html.ValidationMessageFor(m => m.Product.ImageUrl, "", new { @class = "text-danger", @Id = "errImageUrl" })
+                                    </div>
+                                    <!-- /input-group image-preview [TO HERE]-->
+                                </div>
+                                @*}
+                                    else
+                                    {*@
+                                <div id="EditImage" style="margin-top:10px" hidden>
+                                    <label>Product Image(s)</label>
+                                    <div class="row">
+                                        @*<input id="imgCounter" type="hidden" value="@Model.Product.ProductImages.Count">*@
+                                        @*<div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">*@
+                                        @for (int i = 0; i < Model.Product.ProductImages.Count; i++)
+                                        {
+                                            <div class="col-md-2 col-sm-2 col-xs-6 thumbnail" style="max-height:150px;">
+                                                <button id="btnDeleteImg" title="Delete" onclick="EditDivDeletePic(this)" class="btn btn-danger btn-xs deleteButtons pull-right" data-title="Delete" data-productid="8" data-toggle="modal" data-target="#deleteModal"><span class="glyphicon glyphicon-trash"></span></button>
+                                                <img src="@ApiCall.BaseUrl@Model.Product.ProductImages[i].Url" alt="" name="ProductImages[@i].Url" class="img-thumbnail" style="height: 95px;">
+                                                <input type="hidden" name="ProductImages[@i].Url" value="@Model.Product.ProductImages[i].Url">
+                                            </div>
+                                        }
+                                        @*</div>*@
+                                    </div>
+                                    @* <button id="btnEditImg" onclick="EditDivDeletePic()" title="Edit" class="btn btn-primary btn-xs editButtons" data-title="Edit" data-productid="8" data-toggle="modal" data-target="#edit"><span class="glyphicon glyphicon-pencil"></span></button>*@
+                                    <div hidden id="HasImage1">@Model.Product.ImageUrl</div>
+                                </div>
+                                @*}*@
+
+                            </div>
+                            <span style="padding-left:10px" id="ImageError" class="text-danger"></span>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12 col-xs-12">
+                                <label>Product Description</label>
+                                @Html.TextAreaFor(x => x.Product.Description, new { @class = "form-control", placeholder = "Product Description", id = "ProductDescription" })
+                                @Html.ValidationMessageFor(m => m.Product.Description, "", new { @class = "text-danger" })
+                                @*<textarea type="text" class="form-control" id="ProductDescription" placeholder="Product Description" name="@Model.Description"></textarea>*@
+                            </div>
+                        </div>
+
+                        <div class="row" style="margin-top:10px">
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <label>Videos</label>
+                            </div>
+                        </div>
+                        <div id="TextBoxContainer">
+                            @*<input type="hidden" id="hdnVidCount" value="0">*@
+                            @for (int i = 0; i < Model.ProductVideos.Count; i++)
+                            {
+                                <div class="row" style="margin-top: 15px;" id="divTxtBox_@i">
+                                    @*<fieldset>
+                                        <legend>Product Video</legend>*@
+                                    <div class="col-md-5 col-lg-5 col-sm-12">
+                                        <label>Url</label>
+                                        <input placeholder="Video Url" pattern="[-a-zA-Z0-9\:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9\:%_\+.~#?&//=]*)" class="form-control input-validation-error" data-val="true" data-val-url="This is not a valid URL." id="ProductVideosUrl_@i" name="ProductVideos[@i].Url" style="" type="text" value="@Model.ProductVideos[i].Url" required>
+                                        <span class="field-validation-valid text-danger" data-valmsg-for="ProductVideos[@i].Url" data-valmsg-replace="true"></span>
+                                    </div>
+                                    <div class="col-md-5 col-lg-5 col-sm-10">
+                                        <label>Title</label>
+                                        <input placeholder="Video Title" class="form-control input-validation-error" data-val="true" data-val-required="Title is Required." id="ProductVideosTitle_@i" name="ProductVideos[@i].Title" style="" type="text" value="@Model.ProductVideos[i].Title" required>
+                                        <span class="field-validation-valid text-danger" data-valmsg-for="ProductVideos[@i].Title" data-valmsg-replace="true"></span>
+                                    </div>
+                                    @*<div class="col-md-9 col-lg-9 col-sm-10">
+                                            <label>Video Description</label>
+                                            @Html.TextAreaFor(x => x.ProductVideos[@i].Description, new { @class = "form-control", placeholder = "Video Description", id = "ProductVideoDescription" + @i })
+
+                                        </div>*@
+                                    <div class="col-md-2 col-lg-2 col-sm-2" style="margin-top:25px;">
+                                        <button style="height:34px; width:30px" onclick="RemoveTextBox(this)" class="btn btn-danger btn-xs deleteButtons" data-title="Remove"><span class="glyphicon glyphicon-trash"></span></button>
+                                    </div>
+                                    @*</fieldset>*@
+                                </div>
+                            }
+                        </div>
+                        <div class="pull-left" style="margin-top:10px;">
+                            <a onclick="AddTextBox()" class="btn bg-blue">
+                                <i class="fa fa-plus-square"></i>
+                                Add More Videos
+                            </a>
+                        </div>
+                    </div>
+
+                    @*<div class="ln_solid"></div>*@
+                    <div class="form-group">
+                        <div class="col-md-12 col-sm-12 col-xs-12 text-right">
+                            @if (Model.Product.Id == 0)
+                            {
+                                <button id="btnReset" onclick="OnResetClick()" class="btn btn-primary" type="reset">Reset</button>
+                            }
+                            <button type="submit" class="btn btn-success">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/bundles/jquery")
+<script>
+
+var baseUrl = '@ApiCall.BaseUrl';
+    $(document).ready(function () {
+        //var prodId = $("#prodId").val();
+        //var editImageVal = $('#HasImage1').text();
+        //if (prodId == "" || editImageVal == "") {
+        //    $('#EditImage').hide();
+        //    $('#UploadImage').show();
+        //}
+        //else {
+        //    $('#EditImage').show();
+        //    $('#UploadImage').hide();
+        //    $("#txtImageUrl").val(editImageVal);
+        //}
+
+        if ($('#EditImage .row').children("div").length > 0)
+        {
+            $('#EditImage').show();
+        }
+
+        $("#Price, #Weight").keydown(function (e) {
+            // Allow: backspace, delete, tab, escape, enter and .
+            if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+                // Allow: Ctrl+A, Command+A
+                (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) ||
+                // Allow: home, end, left, right, down, up
+                (e.keyCode >= 35 && e.keyCode <= 40)) {
+                // let it happen, don't do anything
+                return;
+            }
+            // Ensure that it is a number and stop the keypress
+            if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                e.preventDefault();
+            }
+        });
+
+        $("#Price").bind("cut copy paste", function (e) {
+            e.preventDefault();
+        });
+    });
+
+
+    function OnResetClick() {
+        $("#clearImage").trigger("click");
+        ClearValidationErrorMessages();
+    }
+
+    function OnSuccessProductInsertion() {
+        //$("#success-alert").append("Store updated successfully.");
+        window.location.href = "@Url.Action("ManageProducts", "Product")";
+
+        //$("#success-alert").fadeTo(2000, 500).slideUp(500, function () {
+        //    $("#success-alert").slideUp(500);
+        //});
+        //$("#ProductName").val('');
+        //$("#Price").val('');
+        //$("#CatId").val('0');
+        //$("#clearImage").trigger("click");
+        //$("#UploadImage").show();
+        //$("#EditImage").hide();
+        //$("#ProductDescription").val('');
+        //$("#Weight").val('');
+    }
+
+    function UploadImage() {
+        var AllowedFileTypes = ["image/jpeg", "image/png", "image/jpg"];
+        var formdata = new FormData(); //FormData object
+        var fileInput = document.getElementById('fileInput');
+
+        //Iterating through each files selected in fileInput
+        for (var i = 0; i < fileInput.files.length; i++) {
+            var file = fileInput.files[i];
+            formdata.append(file.name, file);
+            if (AllowedFileTypes.indexOf(file.type) == -1) {
+                if (ImageType == 1) {
+                    //$("#clearImage").trigger("click");
+                }
+                else if (ImageType == 2) {
+                    //$("#clearImageInsta").trigger("click");
+                }
+
+                return false;
+            }
+        }
+
+        //for (i = 0; i < fileInput.files.length; i++) {
+        //    //Appending each file to FormData object
+        //    formdata.append(fileInput.files[i].name, fileInput.files[i]);
+        //}
+       // formdata.append(file.name, file);
+        if (AllowedFileTypes.indexOf(file.type) == -1) {
+            $("#ImageError").text("Only .Jpeg & .Png files are allowed.");
+            $("#clearImage").trigger("click");
+            return false;
+        }
+        else {
+            $("#ImageError").text("");
+            //Creating an XMLHttpRequest and sending
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'Product/UploadImage');
+            xhr.send(formdata);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+
+                    var imgCounter = parseInt($("#EditImage .row").children("div").length);
+                    var response = JSON.parse(xhr.response).Result;
+                    var html = '';
+                    for (var i = 0; i < response.length; i++) {
+                        html += '<div class="col-md-2 col-sm-2 col-xs-6 thumbnail" style="max-height:150px;">';
+                        html += '<button id="btnDeleteImg" title="Delete" onclick="EditDivDeletePic(this)" class="btn btn-danger btn-xs deleteButtons pull-right" data-title="Delete" data-productid="8" data-toggle="modal" data-target="#deleteModal"><span class="glyphicon glyphicon-trash"></span></button>';
+                        html += '<img src="' + baseUrl + response[i].Url + '"  name="productImage.Url" alt="" class="img-thumbnail" style="height:95px;">';
+                        html += '<input type="hidden" name="ProductImages[' + imgCounter + '].Url" value="' + response[i].Url + '"></div>';
+                        imgCounter = imgCounter + 1;
+                    }
+                    $("#EditImage .row").append(html);
+                    document.getElementById("errImageUrl").innerHTML = '';
+                    $("#txtImageUrl").val("");
+                    $('#EditImage').show();
+                    //$("#imgCounter").val(imgCounter);
+                }
+            }
+            return false;
+        }
+    }
+
+    function ClearImage() {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'Product/DeleteImage');
+        xhr.send("Clear");
+        $("#txtImageUrl").val('');
+    }
+
+    function DeleteImageOnEdit() {
+        var xhr = new XMLHttpRequest();
+        var url = '@Url.Action("DeleteImage", "Product")'
+        xhr.open('POST', url);
+        xhr.send("Clear");
+        $("#txtImageUrl").val('');
+    }
+
+
+
+    function EditDivDeletePic(imgTag) {
+
+        //var imagesLength = $("#EditImage").find("img").length;
+        //if (imagesLength == 1) {
+        //    $('#EditImage').hide();
+        //    $('#UploadImage').show();
+        //}
+
+
+        $(imgTag).parent().remove();
+        if ($('#EditImage .row').children("div").length > 0) {
+            $('#EditImage').show();
+            var c = 0;
+            $("#EditImage .row").children("div").each(function () {
+                $(this).children("input[type='hidden']").attr("name", "ProductImages[" + c + "].Url");
+                $(this).children("img").attr("name", "ProductImages[" + c + "].Url");
+                c++;
+            });
+        }
+        else {
+            $('#EditImage').hide();
+        }
+    }
+
+    function AddProduct_OnStoreChange() {
+        var url = '@Url.Action("FetchCategories", "Product")'
+        var categories = $('#Product_Category_Id');
+        var catId = $('#Product.Category_Id').val();
+        $.getJSON(url, { StoreId: $("#Product_Store_Id").val() }, function (response) {
+            categories.empty();
+            $.each(response, function (index, item) {
+                categories.append($('<option></option>').text(item.Name).val(item.Id));
+            });
+        })
+    }
+
+    function GetDynamicTextBox(value) {
+
+        var itemCount = $("#TextBoxContainer").children("div").length;
+
+       // var oldDiv = $("<div id=\"divTxtBox_" + itemCount - 1 + "\"/>");
+
+
+        //var textBox = $("<input />").attr("placeholder", "Video Url").attr("type", "text").attr("class", "form-control input-validation-error").attr("name", "DynamicTextBox");
+        //textBox.val(value);
+        //div.append("<input placeholder=\"Video Url\" class=\"form-control input-validation-error col-md-11 col-lg-11 col-sm-11\" data-val=\"true\" data-val-url=\"This is not a valid URL.\" id=\"ProductVideos_" + itemCount + "__Url\" name=\"ProductVideos[" + itemCount + "].Url\" style=\"width:96%\" type=\"text\" >");
+
+        //div.append('<input placeholder="Video Title" class="form-control input-validation-error col-md-11 col-lg-11 col-sm-11" data-val="true" data-val-url="Title is Required." id="ProductVideos_' + itemCount + '__Title" name="ProductVideos[' + itemCount+'].Title" style="width:96%" type="text">')
+        ////var button = $("<input />").attr("type", "button").attr("value", "Remove");
+        ////button.attr("onclick", "RemoveTextBox(this)");
+        //div.append("<button style=\"height:34px; width:30px\" onclick=\"RemoveTextBox(this)\" class=\"btn btn-danger btn-xs deleteButtons\" data-title=\"Remove\"><span class=\"glyphicon glyphicon-trash\"></span></button>");
+        //div.append("<span class=\"field-validation-valid text-danger\" data-valmsg-for=\"ProductVideos[" + itemCount + "].Url\" data-valmsg-replace=\"true\"></span>")
+        //div.append("<br>")
+
+        var div = '<div class="row" style="margin-top: 15px;" id="divTxtBox_' + itemCount + '">';
+        div += '<div class="col-md-5 col-lg-5 col-sm-12">';
+        div += '<label>Url</label>';
+        div += '<input placeholder="Video Url" class="form-control input-validation-error" pattern="[-a-zA-Z0-9\:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9\:%_\+.~#?&//=]*)"  data-val="true" data-val-url="This is not a valid URL." id="ProductVideos_' + itemCount + '__Url" name="ProductVideos[' + itemCount + '].Url" style="" type="text" required>';
+        div += '<span class="field-validation-valid text-danger" data-valmsg-for="ProductVideos[' + itemCount + '].Url" data-valmsg-replace="true"></span></div>';
+        div += '<div class="col-md-5 col-lg-5 col-sm-10">';
+        div += '<label>Title</label>';
+        div += '<input placeholder="Video Title" class="form-control input-validation-error" data-val="true" data-val-required="Title is Required." id="ProductVideos_' + itemCount + '" name="ProductVideos[' + itemCount + '].Title" style="" type="text" required>';
+        div += '<span class="field-validation-valid text-danger" data-valmsg-for="ProductVideos[' + itemCount + '].Title" data-valmsg-replace="true"></span></div>';
+
+        //div += '<div class="col-md-9 col-lg-9 col-sm-10"><label> Video Description</label>';
+        //div += '<textarea class="form-control valid" cols="20" id="ProductVideoDescription' + itemCount + '" name="ProductVideos[' + itemCount + '].Description" placeholder="Video Description" rows="2"></textarea></div>';
+        div += '<div class="col-md-2 col-lg-2 col-sm-2" style="margin-top:25px;">';
+        div += '<button style="height:34px; width:30px" onclick="RemoveTextBox(this)" class="btn btn-danger btn-xs deleteButtons" data-title="Remove"><span class="glyphicon glyphicon-trash"></span></button>';
+        div += '</div></div> ';
+        $("#TextBoxContainer").append(div);
+       // return div;
+    }
+
+    function AddTextBox() {
+        var div = GetDynamicTextBox("");
+        $("#TextBoxContainer").append(div);
+    }
+
+    function RemoveTextBox(button) {
+     //   var itemCount = parseInt($("#hdnVidCount").val(), 10);
+        $(button).parent().parent().remove();
+     //   $("#hdnVidCount").val((itemCount - 1));
+        var c = 0;
+        $("#TextBoxContainer .row").each(function () {
+            $($(this).find("input")[0]).attr("id", "ProductVideosUrl_" + c).attr("name", "ProductVideos[" + c + "].Url");
+            $($(this).find("span")[0]).attr("data-valmsg-for", "ProductVideos[" + c + "].Url");
+
+            $($(this).find("input")[1]).attr("id", "ProductVideosTitle_" + c).attr("name", "ProductVideos[" + c + "].Title");
+            $($(this).find("span")[1]).attr("data-valmsg-for", "ProductVideos[" + c + "].Title");
+
+            $($(this).find("textarea")).attr("name", "ProductVideos[" + c + "].Description").attr("id","ProductVideoDescription" + c);
+            c++;
+        });
+
+    }
+
+
+</script>

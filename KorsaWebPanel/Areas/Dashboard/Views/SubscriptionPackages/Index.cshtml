@@ -1,0 +1,216 @@
+﻿@model KorsaWebPanel.Areas.Dashboard.BindingModels.AddSubscriptionPackageBindingModel
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    /* Always set the map height explicitly to define the size of the div
+           * element that contains the map. */
+    #map {
+        height: 392px;
+        width: 100%;
+    }
+    /* Optional: Makes the sample page fill the window. */
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    #description {
+        font-family: Roboto;
+        font-size: 15px;
+        font-weight: 300;
+    }
+
+    #infowindow-content .title {
+        font-weight: bold;
+    }
+
+    #infowindow-content {
+        display: none;
+    }
+
+    #map #infowindow-content {
+        display: inline;
+    }
+
+    .pac-card {
+        margin: 10px 10px 0 0;
+        border-radius: 2px 0 0 2px;
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        outline: none;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        background-color: #fff;
+        font-family: Roboto;
+    }
+
+    #pac-container {
+        padding-bottom: 12px;
+        margin-right: 12px;
+    }
+
+    .pac-controls {
+        display: inline-block;
+        padding: 5px 11px;
+    }
+
+        .pac-controls label {
+            font-family: Roboto;
+            font-size: 13px;
+            font-weight: 300;
+        }
+
+    #pac-input {
+        background-color: #fff;
+        font-family: Roboto;
+        font-size: 15px;
+        font-weight: 300;
+        margin-left: 12px;
+        padding: 0 11px 0 13px;
+        text-overflow: ellipsis;
+        width: 400px;
+    }
+
+        #pac-input:focus {
+            border-color: #4d90fe;
+        }
+
+    #title {
+        color: #fff;
+        background-color: #4d90fe;
+        font-size: 25px;
+        font-weight: 500;
+        padding: 6px 12px;
+    }
+
+    .table caption + thead tr:first-child th,
+    .table colgroup + thead tr:first-child th,
+    .table thead:first-child tr:first-child th,
+    .table caption + thead tr:first-child td,
+    .table colgroup + thead tr:first-child td,
+    .table thead:first-child tr:first-child td {
+        border-top: 0 !important;
+        text-align: center !important;
+        vertical-align: central !important;
+    }
+
+    .table-responsive {
+        border: 0px;
+    }
+
+    /*.input-group {
+        margin-bottom: 6px !important;
+        margin-top: 6px !important;
+    }*/
+    .row {
+        margin-bottom: 20px;
+    }
+</style>
+
+
+<div class="right_col" role="main">
+    <div class="row">
+        <div class="col-md-12 col-xs-12">
+            @*@Html.AntiForgeryToken()*@
+            <div class="alert alert-success" id="success-alert" hidden>
+                <button type="button" class="close" data-dismiss="alert">x</button>
+                <strong></strong><span> </span>
+            </div>
+            <div class="alert alert-error" id="error-alert" hidden>
+                <button type="button" class="close" data-dismiss="alert">x</button>
+                <strong>Error! </strong><span></span>
+            </div>
+            @*<input type="hidden" id="hdnRole" value="@Model.Role">*@
+            @using (Html.BeginForm("AddSubscription", "SubscriptionPackages"))
+
+            {
+                <div class="x_panel">
+                    <div class="x_title">
+                        @if (Model.Id == 0)
+                        {
+                            <h3>Add New Subscription</h3>
+                        }
+                        else
+                        {
+                            <h3>Edit Subscription</h3>
+                        }
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+                        @Html.HiddenFor(x=>x.Id)
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12 col-xs-12 ">
+                                <label>Package Title </label>
+                                @Html.TextBoxFor(x => x.Name, new { placeholder = "Package Title", @class = "form-control input-validation-error" })
+                                @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12 col-xs-12 ">
+                                <label>Number of Rides</label>
+                                @Html.TextBoxFor(x => x.NumOfRides, new { placeholder = "Number of rides", @class = "form-control input-validation-error" })
+                                @Html.ValidationMessageFor(m => m.NumOfRides, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12 col-xs-12 ">
+                                <label>Price</label>
+                                @Html.TextBoxFor(x => x.Price, new { placeholder = "Number of rides", @class = "form-control input-validation-error" })
+                                @Html.ValidationMessageFor(m => m.Price, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12 col-xs-12 ">
+                                <label>Package Duration</label>
+                                @Html.TextBoxFor(x => x.Duration, new { placeholder = "Package Duration", @class = "form-control input-validation-error" })
+                                @Html.ValidationMessageFor(m => m.Duration, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12 col-xs-12 ">
+                                <label>Duration Type</label>
+                                
+                                @Html.DropDownList("DurationType", new SelectList(Model.DurationTypeOptions.Items,
+                                "value", "Text", Model.DurationTypeOptions.SelectedValue), new { @class = "form-control" })
+                                @Html.ValidationMessageFor(x => x.DurationType, "", new { @class = "text-danger" })
+                                
+                            </div>
+                        </div>
+                        
+                        <br />
+
+                        
+                        <br />
+                        <br />
+                    </div>
+
+                </div>
+
+
+                <div class="form-group">
+                    <div class="col-md-12 col-sm-12 col-xs-12 text-right">
+                        <button class="btn btn-primary" onclick="OnResetClick()" type="reset">Reset</button>
+                        <button type="submit" class="btn btn-success">Submit</button>
+                    </div>
+                    <br>
+                </div>
+                    @*</form>*@
+                    @Html.ValidationMessage("Error")
+            }
+
+            <div id="infowindow-content">
+                <img src="" width="16" height="16" id="place-icon">
+                <span id="place-name" class="title"></span><br>
+                <span id="place-address"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jqueryval")

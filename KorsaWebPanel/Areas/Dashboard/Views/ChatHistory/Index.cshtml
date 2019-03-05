@@ -1,0 +1,664 @@
+﻿@model BasketWebPanel.ViewModels.ChatHistoryViewModel
+@{
+    ViewBag.Title = "ViewUsers";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@*/////StarRatingPlugin*@
+<link href="~/Content/bootstrap-starrating/star-rating.css" rel="stylesheet" />
+<script src="~/Content/bootstrap-starrating/star-rating.js"></script>
+
+<script src="http://momentjs.com/downloads/moment.js"></script>
+
+
+<style>
+    .table caption + thead tr:first-child th,
+    .table colgroup + thead tr:first-child th,
+    .table thead:first-child tr:first-child th,
+    .table caption + thead tr:first-child td,
+    .table colgroup + thead tr:first-child td,
+    .table thead:first-child tr:first-child td {
+        border-top: 0;
+        text-align: center;
+        vertical-align: central;
+    }
+
+    p {
+        margin: 0 0 0px !important;
+    }
+
+    .btn-group {
+        padding-top: 21px;
+    }
+
+    /* Chat CSS */
+    .container {
+        max-width: 1170px;
+        margin: auto;
+    }
+
+    img {
+        max-width: 100%;
+    }
+
+    .inbox_people {
+        background: #f8f8f8 none repeat scroll 0 0;
+        float: left;
+        overflow: hidden;
+        width: 40%;
+        border-right: 1px solid #c4c4c4;
+    }
+
+    .inbox_msg {
+        border: 1px solid #c4c4c4;
+        clear: both;
+        overflow: hidden;
+    }
+
+    .top_spac {
+        margin: 20px 0 0;
+    }
+
+
+    .recent_heading {
+        float: left;
+        width: 40%;
+    }
+
+    .srch_bar {
+        display: inline-block;
+        text-align: right;
+        width: 60%;
+    }
+
+    .headind_srch {
+        padding: 10px 29px 10px 20px;
+        overflow: hidden;
+        border-bottom: 1px solid #c4c4c4;
+    }
+
+    .recent_heading h4 {
+        color: #05728f;
+        font-size: 21px;
+        margin: auto;
+    }
+
+    .srch_bar input {
+        border: 1px solid #cdcdcd;
+        border-width: 0 0 1px 0;
+        width: 80%;
+        padding: 2px 0 4px 6px;
+        background: none;
+    }
+
+    .srch_bar .input-group-addonn button {
+        background: rgba(0, 0, 0, 0) none repeat scroll 0 0;
+        border: medium none;
+        padding: 0;
+        color: #707070;
+        font-size: 18px;
+    }
+
+    .srch_bar .input-group-addonn {
+        margin: 0 0 0 -27px;
+    }
+
+    .chat_ib h5 {
+        font-size: 15px;
+        color: #464646;
+        margin: 0 0 8px 0;
+    }
+
+        .chat_ib h5 span {
+            font-size: 13px;
+            float: right;
+        }
+
+    .chat_ib p {
+        font-size: 14px;
+        color: #989898;
+        margin: auto
+    }
+
+    .chat_img {
+        float: left;
+        width: 11%;
+    }
+
+    .chat_ib {
+        float: left;
+        padding: 0 0 0 15px;
+        width: 88%;
+    }
+
+    .chat_people {
+        overflow: hidden;
+        clear: both;
+    }
+
+    .chat_list {
+        border-bottom: 1px solid #c4c4c4;
+        margin: 0;
+        padding: 18px 16px 10px;
+    }
+
+    .inbox_chat {
+        height: 550px;
+        overflow-y: scroll;
+    }
+
+    .active_chat {
+        background: #ebebeb;
+    }
+
+    .incoming_msg_img {
+        display: inline-block;
+        width: 6%;
+    }
+
+    .received_msg {
+        display: inline-block;
+        padding: 0 0 0 10px;
+        vertical-align: top;
+        width: 92%;
+    }
+
+    .received_withd_msg p {
+        background: #ebebeb none repeat scroll 0 0;
+        border-radius: 3px;
+        color: #646464;
+        font-size: 14px;
+        margin: 0;
+        padding: 5px 10px 5px 12px;
+        width: 100%;
+    }
+
+    .time_date {
+        color: #747474;
+        display: block;
+        font-size: 12px;
+        margin: 8px 0 0;
+    }
+
+    .received_withd_msg {
+        width: 57%;
+    }
+
+    .mesgs {
+        float: left;
+        padding: 30px 15px 0 25px;
+        width: 60%;
+    }
+
+    .sent_msg p {
+        background: #26B99A none repeat scroll 0 0;
+        border:1px solid #169F85;
+        border-radius: 3px;
+        font-size: 14px;
+        margin: 0;
+        color: #fff;
+        padding: 5px 10px 5px 12px;
+        width: 100%;
+    }
+
+    .outgoing_msg {
+        overflow: hidden;
+        margin: 26px 0 26px;
+    }
+
+    .sent_msg {
+        float: right;
+        width: 46%;
+    }
+
+    .input_msg_write input {
+        background: rgba(0, 0, 0, 0) none repeat scroll 0 0;
+        border: medium none;
+        color: #4c4c4c;
+        font-size: 15px;
+        min-height: 48px;
+        width: 100%;
+    }
+
+    .type_msg {
+        border-top: 1px solid #c4c4c4;
+        position: relative;
+    }
+
+    .msg_send_btn {
+        background: #169F85 none repeat scroll 0 0;
+        border: medium none;
+        border-radius: 50%;
+        color: #fff;
+        cursor: pointer;
+        font-size: 17px;
+        height: 33px;
+        position: absolute;
+        right: 0;
+        top: 11px;
+        width: 33px;
+    }
+
+    .messaging {
+        padding: 0 0 50px 0;
+    }
+
+    .msg_history {
+        height: 516px;
+        overflow-y: auto;
+    }
+    .NewMessage {
+        background: #e8d499;
+    }
+</style>
+<div class="right_col" role="main">
+    <div class="row">
+        <div class="x_panel ">
+            <div hidden class="alert alert-success" id="success-alert">
+                <button type="button" class="close" data-dismiss="alert">x</button>
+                <strong>Success!</strong><span></span>
+            </div>
+            <div class="alert alert-error" id="error-alert" hidden>
+                <button type="button" class="close" data-dismiss="alert">x</button>
+                <strong>Error! </strong> <span> </span>
+            </div>
+            <div class="x_title">
+                <h3 class="pull-left">Chat</h3>                
+                <div class="clearfix"></div>
+            </div>
+            <p><input type="hidden" value="1" id="currentUserId" /><input type="hidden" value="1" id="currentChannel" /><input type="hidden" value="1" id="currentUserType" />
+            </p>
+            <div class="x_content">
+                <div class="messaging">
+                    <div class="inbox_msg">
+                        <div class="inbox_people">
+                            <div class="headind_srch">
+                                <div class="recent_heading">
+                                    <h4>Recent</h4>
+                                </div>
+                                <div class="srch_bar">
+                                    <div class="stylish-input-group">
+                                        <input type="text" class="search-bar" placeholder="Search">
+                                        <span class="input-group-addonn">
+                                            <button type="button"> <i class="fa fa-search" aria-hidden="true"></i> </button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="inbox_chat">
+                                @{
+                                    foreach (var _users in Model.ChatHistory)
+                                    {
+                                        <div style="cursor:pointer;" class="chat_list" id="@("box"+_users.entityId+"_"+_users.userType)" onclick="getChat(@_users.entityId,@_users.userType)">
+                                            <div class="chat_people">
+                                                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+                                                <div class="chat_ib">
+                                                    <h5>@_users.userName <span class="chat_date">@(_users.lastConversationDate.ToString("dddd, dd MMMM yyyy"))</span></h5>
+                                                    <p newmessage="0" id="@("chattext"+_users.entityId +"_" + _users.userType)">
+                                                        ...
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                }                                
+                            </div>
+                        </div>
+                        <div class="mesgs">
+                            <div class="msg_history">                               
+                                
+                            </div>
+                            <div class="type_msg">
+                                <div class="input_msg_write">
+                                    <input type="text" class="write_msg" placeholder="Type a message" />
+                                    <button class="msg_send_btn" type="button" onclick="SendMessage();"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@Scripts.Render("~/bundles/jquery")
+<script>
+    
+    var selectedUsers = [];
+    $(document).ready(function () {
+        var table = $('#datatable').DataTable({
+            "pagingType": "full_numbers",
+            columnDefs: [{
+                orderable: false,
+                className: 'select-checkbox',
+                targets: [0, 4, 5, 6, 7]
+            }],
+            select: {
+                style: 'os',
+                selector: 'td:first-child'
+            },
+            order: [
+                [1, 'desc']
+            ],
+
+        });
+
+       
+
+        // Select First Chat
+        $(".chat_list").first().click();
+
+        table.rows().every(function (rowIdx) {
+            var chkBoxCell = table.cell(rowIdx, 0).node()
+            ChangeStatusColor(rowIdx, $(chkBoxCell).data("userstatus"));
+        })
+
+
+
+
+        $(':checkbox', table.rows().nodes()).change(function () {
+            if (!$(this).prop("checked")) {
+                $("#mastercheckbox").prop("checked", false);
+            }
+        });
+    })
+
+
+    $("#mastercheckbox").click(function () {
+        var table = $('#datatable').DataTable();
+        var isChecked = this.checked;
+        $(':checkbox', table.rows().nodes()).prop('checked', isChecked);
+
+        selectedUsers = [];
+
+        table.rows().every(function (rowIdx, tableLoop, rowLoop) {
+
+            var chkBoxCell = table.cell(rowIdx, 0).node()
+
+            if (isChecked) {
+
+                var userObj = {
+                    UserId: $(chkBoxCell).attr("id"),
+                    Status: $(chkBoxCell).data("userstatus")
+                }
+
+                selectedUsers.push(userObj)
+            }
+            else {
+                selectedUsers = [];
+            }
+        });
+    });
+
+    $('#datatable').on('change', 'input[type=checkbox][id!=mastercheckbox]', function (e) {
+        var table = $('#datatable').DataTable();
+        var $check = $(this);
+        var chkBoxCell = table.cell("#" + $check.attr("userid")).node();
+
+        if ($check.is(":checked") == true) {
+
+            var checked = jQuery.inArray($check.val(), selectedUsers);
+
+
+            if (checked == -1) {
+
+                //add id to selectedDeliverers.
+                var userObj = {
+                    UserId: $(chkBoxCell).attr("id"),
+                    Status: $(chkBoxCell).data("userstatus")
+                }
+
+                selectedUsers.push(userObj);
+            }
+        } else {
+
+            selectedUsers = selectedUsers.filter(function (el) {
+                return el.UserId !== $(chkBoxCell).attr("id");
+            });
+        }
+    });
+
+    function OnSuccessUsersViewInsertion() {
+        $("#success-alert").fadeTo(2000, 500).slideUp(500, function () {
+            $("#success-alert").slideUp(500);
+        });
+    }
+
+    // Handle form submission event
+    $('#frmViewUsers').on('submit', function (e) {
+        // Prevent actual form submission
+        e.preventDefault();
+
+        var table = $('#datatable').DataTable();
+
+        var postData = {
+            selectedUsers: selectedUsers
+        };
+
+        addAntiForgeryToken(postData);
+
+        // Submit form data via Ajax
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("SaveUserStatuses", "Users")',
+            data: postData,
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                OnFailedInsertion(XMLHttpRequest, textStatus, errorThrown)
+            },
+            success: function (data) {
+                OnSuccessUsersViewInsertion()
+            }
+
+        });
+    });
+
+    function StatusChanged(index, text, value, userId) {
+
+        var table = $('#datatable').DataTable();
+
+        var btn = document.getElementById('btnUserStatus_' + index)
+        btn.innerHTML = text + ' <span class="caret"></span>';
+        $(table.cell("#" + userId).node()).data("userstatus", value);
+
+        if (document.getElementById("Users_" + index + "__IsChecked").checked == true) {
+            //remove from selectedorders
+            selectedUsers = selectedUsers.filter(function (el) {
+                return el.UserId !== userId;
+            });
+
+            //add into selectedorder
+            var userObj = {
+                UserId: userId,
+                Status: value
+            }
+
+            selectedUsers.push(userObj);
+        }
+        ChangeStatusColor(index, value);
+    }
+
+    function ChangeStatusColor(rowNum, statusType) {
+
+        if (statusType == false || statusType == "False") { // Accepted
+            //            var btn = document.getElementById("btnUserStatus_" + rowNum);
+            //          btn.style.backgroundColor = "#008080";
+            //document.getElementById("btnUserStatus_" + rowNum).style.backgroundColor = "#008080";
+           $("#btnUserStatus_" + rowNum).css("backgroundColor","#008080");
+
+        }
+        else if (statusType == true || statusType == "True") { // Rejected
+            //document.getElementById("btnUserStatus_" + rowNum).style.backgroundColor = "#e6194b";
+            $("#btnUserStatus_" + rowNum).css("backgroundColor", "#e6194b");
+
+        }
+    }
+
+    $(document).on("click", ".btnDetails", function () {
+        var userid = $(this).data('userid');
+        var url = '@Html.Raw(Url.Action("GetUser", "Users", new { UserId = "__id__" }))';
+        window.location.href = url.replace('__id__', userid);
+
+    });
+    // example caller:
+
+    $(".write_msg").keypress(function (e) {
+        if (e.which == 13) {
+            SendMessage();
+        }
+    });
+    
+    socket.on('AdminGenericChanel', function (data) {
+
+        var ret = JSON.parse(data);
+        if ($("#box" + ret.senderUserId + "_" + ret.userType).html() == undefined) {
+            var htm2 = `<div style="cursor:pointer;" class="chat_list" id="box` + ret.senderUserId + `_` + ret.userType + `" onclick="getChat(`+ret.senderUserId+`,`+ret.userType+`)">
+                        <div class="chat_people">
+                            <div class="chat_img"><img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+                            <div class="chat_ib">
+                                <h5>`+ ret.senderUserName + ` <span class="chat_date">` + moment(ret.date).calendar() +`</span></h5>
+                                <p newmessage="0" id="chattext`+ ret.senderUserId + `_` + ret.userType + `">
+                                    ...
+                                </p>
+                            </div>
+                        </div>
+                    </div>`;
+            $(".inbox_chat").append(htm2);
+        }
+        var counter = $("#chattext" + ret.senderUserId + "_" + ret.userType).attr("newmessage");        
+        counter = parseInt(counter) + 1;
+        $("#chattext" + ret.senderUserId + "_" + ret.userType).attr("newmessage", counter);
+        $("#chattext" + ret.senderUserId + "_" + ret.userType).text(counter + " new message(s)");
+        $("#box" + ret.senderUserId + "_" + ret.userType).addClass("NewMessage");
+        var dated = moment(ret.date).calendar();
+        var htm = `<div class="incoming_msg">
+                    <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+                    <div class="received_msg">
+                        <div class="received_withd_msg">
+                            <p>`+ ret.message + `</p>
+                            <span class="time_date">`+ dated + `</span>
+                        </div>
+                    </div>
+                </div>`;
+        if (parseInt($("#currentUserId").val()) == ret.senderUserId && parseInt($("#currentUserType").val()) == ret.userType) {
+            if ($(".msg_history").html() == "No Conversation Found!") {
+                $(".msg_history").html("");
+            }
+            $(".msg_history").append(htm);
+        }
+        //$("#chatCounterId").text(parseInt($("#chatCounterId").text()) + 1);
+        $(".msg_history").animate({ scrollTop: $('.msg_history').prop("scrollHeight") }, 1000);
+        
+    });
+    socket.on('disconnect', function () { });
+
+    function getChat(id, channel) {
+        $(".active_chat").each(function () {
+            $(this).removeClass("active_chat");
+        });
+        
+        $("#box" + id + "_" + channel).removeClass("NewMessage");
+        $("#box" + id + "_" + channel).addClass("active_chat");
+        $("#chattext" + id + "_" + channel).text("...");
+
+        $("#chatCounterId").text(parseInt($("#chatCounterId").text()) - parseInt($("#chattext" + id + "_" + channel).attr("newmessage")));
+
+        $("#chattext" + id + "_" + channel).attr("newmessage",0);
+
+
+        $("#currentUserId").val(id);
+        var cChannel = "";
+        if (channel == 0) {
+            cChannel = "AdminChat:U" + id;
+        } else {
+            cChannel = "AdminChat:D" + id;
+        }
+        $("#currentChannel").val(cChannel);
+        $("#currentUserType").val(channel);
+        
+        $.getJSON("http://10.100.20.11:5002/api/LoadMessage/" + cChannel + "/0/4000", function (data) {
+            var items = [];
+            $.each(data, function (key, val) {
+                if (key == "MessageList") {
+                    $(".msg_history").html("");
+                    if (val.length < 1) {
+                        $(".msg_history").html("No Conversation Found!");
+                    }
+                    for (var i = 0; i < val.length; i++) {
+                        var htm = "";
+                        var retDate = JSON.parse(val[i]);
+                        var dated = moment(retDate.date).calendar(); //moment(retDate.date).format('MMMM Do YYYY, h:mm:ss a');
+                        
+                        if ($(".msg_history").html() == "No Conversation Found!") {
+                            $(".msg_history").html("");
+                        }
+
+                        if (retDate.senderUserName == "Adminisrator")
+                        {
+                            htm = `<div class="outgoing_msg">
+                                        <div class="sent_msg">
+                                            <p>`+ retDate.message + `</p>
+                                            <span class="time_date">`+ dated + `</span>
+                                        </div>
+                                    </div>`;
+                            $(".msg_history").append(htm);
+                        } else {
+                            htm = `<div class="incoming_msg">
+                                        <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+                                        <div class="received_msg">
+                                            <div class="received_withd_msg">
+                                                <p>`+ retDate.message + `</p>
+                                                <span class="time_date">`+ dated + `</span>
+                                            </div>
+                                        </div>
+                                    </div>`;
+                            $(".msg_history").append(htm);
+                        }
+                    }
+                    $(".msg_history").animate({ scrollTop: $('.msg_history').prop("scrollHeight") }, 1000);
+                }
+            });
+
+        });
+
+    }
+
+    function SendMessage() {
+        var text = $(".write_msg").val();
+        var currentUserId = $("#currentUserId").val();
+        var ChanelId = $("#currentChannel").val();
+        if (text != "" || text != null) {
+            var dated = moment(new Date($.now())).calendar();
+            var htm = `
+                <div class="outgoing_msg">
+                    <div class="sent_msg">
+                        <p>`+ text + `</p>
+                        <span class="time_date">`+ dated + `</span>
+                    </div>
+                </div>`;
+            if ($(".msg_history").html() == "No Conversation Found!") {
+                $(".msg_history").html("");
+            }
+            $(".msg_history").append(htm);
+            var newMSG = {
+                id: 0,
+                message: text,
+                senderUserName: "Adminisrator",
+                senderUserId: 0,
+                isMedia: false,
+                channel: ChanelId,
+                messageType: 0,
+                messageDeliveryStatus: 0,
+                receiverUserId: currentUserId,
+                userType: 0
+            };
+
+            socket.emit("io:AdminChatSendToApp", newMSG);
+            $(".write_msg").val("");
+            $(".msg_history").animate({ scrollTop: $('.msg_history').prop("scrollHeight") }, 1000);
+        }
+    }
+
+</script>

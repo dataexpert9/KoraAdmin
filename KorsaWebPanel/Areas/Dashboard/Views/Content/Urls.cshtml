@@ -1,0 +1,86 @@
+﻿@model BasketWebPanel.ViewModels.UrlsViewModel
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    #kvFileinputModal {
+        display: inline-table;
+    }
+
+    .file-drop-disabled {
+        align-content: center;
+        width: fit-content;
+    }
+</style>
+
+@using (Ajax.BeginForm("Urls", "Content", new AjaxOptions { OnSuccess = "OnSuccessUrls", OnFailure = "OnFailedInsertion", LoadingElementId = "divLoader" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="right_col" role="main">
+        <div class="row">
+            <div class="x_panel ">
+                <div class="alert alert-success" id="success-alert" hidden>
+                    <button type="button" class="close" data-dismiss="alert">x</button>
+                    <strong>Success! </strong><span> </span>
+                </div>
+                <div class="alert alert-error" id="error-alert" hidden>
+                    <button type="button" class="close" data-dismiss="alert">x</button>
+                    <strong>Error! </strong> <span> </span>
+                </div>
+                <div class="x_title">
+                    <h3 class="pull-left">Urls</h3>
+                    <div class="clearfix"></div>
+                </div>
+                <p>
+
+                </p>
+                <div class="row">
+                    <div class="col-md-12 col-xs-12">
+                        <label>Instagram Url</label>
+                        @Html.TextBoxFor(x => x.InstagramUrl, new { @autofocus = "", @class = "form-control", id = "InstagramUrl", @placeholder = "Instagram Url" })
+                        @Html.ValidationMessageFor(m => m.InstagramUrl, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="col-md-12 col-xs-12">
+                        <label>Google Url</label>
+                        @Html.TextBoxFor(x => x.GoogleUrl, new { @autofocus = "", @class = "form-control", id = "GoogleUrl", @placeholder = "Google Url" })
+                        @Html.ValidationMessageFor(m => m.GoogleUrl, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-12 col-xs-12">
+                        <label>Facebook Url</label>
+                        @Html.TextBoxFor(x => x.FacebookUrl, new { @autofocus = "", @class = "form-control", id = "FacebookUrl", @placeholder = "Facebook Url" })
+                        @Html.ValidationMessageFor(m => m.FacebookUrl, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-12 col-xs-12">
+                        <label>Pintrest Url</label>
+                        @Html.TextBoxFor(x => x.PintrestUrl, new { @autofocus = "", @class = "form-control", id = "PintrestUrl", @placeholder = "Pintrest Url" })
+                        @Html.ValidationMessageFor(m => m.PintrestUrl, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-12 col-xs-12">
+                        <label>Twitter Url</label>
+                        @Html.TextBoxFor(x => x.TwitterUrl, new { @autofocus = "", @class = "form-control", id = "TwitterUrl", @placeholder = "Twitter Url" })
+                        @Html.ValidationMessageFor(m => m.TwitterUrl, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-12 col-sm-12 col-xs-12 text-right">
+                    <button type="submit" class="btn btn-success">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+@Scripts.Render("~/bundles/jquery")
+
+
+<script>
+    function OnSuccessUrls() {
+        $("#success-alert").fadeTo(2000, 500).slideUp(500, function () {
+            $("#success-alert").slideUp(500);
+        });
+    }
+</script>

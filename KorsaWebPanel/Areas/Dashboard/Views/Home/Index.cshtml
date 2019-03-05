@@ -1,0 +1,182 @@
+﻿@model BasketWebPanel.Areas.Dashboard.Models.WebDashboardStatsViewModel
+@{
+    ViewBag.Title = "Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+<style>
+    .nav.pull-right.panel_toolbox {
+        min-width: 10px !important;
+        width: 10px !important;
+    }
+
+    table:hover, td:hover, tr:hover, tbody:hover, th:hover {
+        background: none !important;
+    }
+    .theme-color{
+        color:#f7cb16;
+    }
+    .dashboard-widget-title{
+        color:#ff0200;
+    }
+</style>
+<!-- page content -->
+<div class="right_col" role="main">
+    <!-- top tiles -->
+    @*@for (int i = 0; i < Model.DeviceUsage.Count; i++)
+    {
+        <input type="hidden" data-percentage="@Model.DeviceUsage[i].Percentage" id="hdnDeviceUsage_@i" value="@Model.DeviceUsage[i].Count">
+    }*@
+    <div class="row tile_count" style="margin-bottom:0px">
+        <div class="col-md-4 col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            @*<i class="fa fa-user fa-5x"></i>*@
+                            <i class="fa fa-user fa-5x theme-color"></i>
+                        </div>
+                        <div class="col-xs-6 text-right">
+                            <h3 id="todayOrders" class="announcement-heading">@Model.TotalUsers</h3>
+                            <p class="announcement-text">Total Users</p>
+                        </div>
+                    </div>
+                </div>
+                <a href="@Url.Action("ManageUsers","Users")">
+                    <div class="panel-footer announcement-bottom">
+                        <div class="row">
+                            <div class="col-xs-6">
+                                View
+                            </div>
+                            <div class="col-xs-6 text-right">
+                                <i class="fa fa-arrow-circle-right"></i>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="col-md-4 col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <i class="fa fa-users fa-5x theme-color"></i>
+                        </div>
+                        <div class="col-xs-6 text-right">
+                            <h3 class="announcement-heading">@Model.TotalDrivers</h3>
+                            <p class="announcement-text">Total Drivers</p>
+                        </div>
+                    </div>
+                </div>
+                <a href="@Url.Action("ManageDrivers","Drivers")">
+                    <div class="panel-footer announcement-bottom">
+                        <div class="row">
+                            <div class="col-xs-6">
+                                View
+                            </div>
+                            <div class="col-xs-6 text-right">
+                                <i class="fa fa-arrow-circle-right"></i>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="col-md-4 col-xs-12">
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <i class="fa fa-car fa-5x theme-color"></i>
+                        </div>
+                        <div class="col-xs-6 text-right">
+                            <h3 class="announcement-heading">@Model.TotalRides</h3>
+                            <p class="announcement-text">Total Rides</p>
+                        </div>
+                    </div>
+                </div>
+                <a href="@Url.Action("ManageRides","Rides")">
+                    <div class="panel-footer announcement-bottom">
+                        <div class="row">
+                            <div class="col-xs-6">
+                                View
+                            </div>
+                            <div class="col-xs-6 text-right">
+                                <i class="fa fa-arrow-circle-right"></i>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        @*<div class="col-md-3 col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <i class="fa fa-car fa-5x theme-color"></i>
+                        </div>
+                        <div class="col-xs-6 text-right">
+                            <h3 class="announcement-heading">@Model.TotalVehicles</h3>
+                            <p class="announcement-text">Total Vehicles</p>
+                        </div>
+                    </div>
+                </div>
+                <a href="@Url.Action("ManageRequests","Requests")">
+                    <div class="panel-footer announcement-bottom">
+                        <div class="row">
+                            <div class="col-xs-6">
+                                View
+                            </div>
+                            <div class="col-xs-6 text-right">
+                                <i class="fa fa-arrow-circle-right"></i>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>*@
+    </div>
+    <div class="row">
+        <div class="col-md-4 col-sm-4 col-xs-12">
+           
+        </div>
+    </div>
+   
+</div>
+<!-- /page content -->
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/shared")
+<script>
+    $(document).ready(function () {
+        var androidUsage = $('#hdnDeviceUsage_1').val();
+        var iosUsage = $('#hdnDeviceUsage_0').val();
+        var data = [iosUsage, androidUsage, 0]
+        init_chart_doughnut(data);
+    });
+
+
+    if (typeof (EventSource) !== "undefined") {
+        var source = new EventSource("Home/OrderNotification");
+        source.onmessage = function (event) {
+            var todayOrders = ($('#todayOrders'));
+            if (parseInt(todayOrders.text()) < parseInt(event.data)) {
+                var getUrl = window.location;
+                var audioFilePath = getUrl.protocol + "//" + getUrl.host + "/NotificationSound.wav";
+                var audio = new Audio(audioFilePath);
+                todayOrders.text(event.data);
+                audio.play();
+            }
+        };
+        source.onopen = function (event) {
+        };
+
+        source.onerror = function (event) {
+        };
+    }
+    else {
+        document.getElementById("result").innerHTML = "Sorry, your browser does not support server-sent events...";
+    }
+</script>

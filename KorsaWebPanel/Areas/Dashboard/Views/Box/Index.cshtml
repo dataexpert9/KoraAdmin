@@ -1,0 +1,286 @@
+﻿@model BasketWebPanel.ViewModels.AddBoxViewModel
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    fieldset {
+        padding: .35em .625em .75em;
+        margin: 0 2px;
+        border: 1px solid #c0c0c0;
+    }
+
+    legend {
+        font-size: 13px;
+    }
+</style>
+
+<div class="right_col" role="main">
+
+    <div class="row">
+        <div class="col-md-12 col-xs-12">
+            @Html.AntiForgeryToken()
+            <div class="alert alert-success" id="success-alert" hidden>
+                <button type="button" class="close" data-dismiss="alert">x</button>
+                <strong>Success! </strong>
+            </div>
+            <div class="alert alert-error" id="error-alert" hidden>
+                <button type="button" class="close" data-dismiss="alert">x</button>
+                <strong>Error! </strong> <span> </span>
+            </div>
+            @using (Ajax.BeginForm("Index", "Box", new AjaxOptions { OnSuccess = "OnBoxSuccessInsertion", OnFailure = "OnFailedInsertion", LoadingElementId = "divLoader" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="x_panel">
+                    <div class="x_title">
+                        @if (Model.Id == 0)
+                        {
+                            <h2>Add New Box</h2>
+                        }
+                        else
+                        {
+                            <h2>Edit Box</h2>
+                        }
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+                        <input type="hidden" id="BoxId" name="Id" value="@Model.Id" />
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6 col-xs-6">
+                                <label>Box Name</label>
+                                <input type="text" autofocus data-val="true" class="form-control input-validation-error" name="Name" id="BoxName" data-val-required="This field is required" placeholder="Box Name" value="@Model.Name">
+                                @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+                                <label>Box Price</label>
+                                @Html.TextBoxFor(x => x.Price, new { @class = "form-control", @id = "Price", @placeholder = "Box Price", @type = "text" })
+                                @Html.ValidationMessageFor(m => m.Price, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6 col-xs-6">
+                                <div class="form-group form-inline  ">
+                                    <label class="control-label" title="">Box Type</label>
+                                    <span class="ico-help" title="Search by a payment status"><i class="fa fa-question-circle"></i></span>
+                                    @Html.DropDownList("BoxCategory_Id", new SelectList(Model.Categories.Items, "value", "Text", Model.Categories.SelectedValue), new { @class = "form-control", @Id = "aioCategories" })
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6 col-xs-6">
+                                <label class="control-label" for="ReleaseDate" title="">Release Date</label>
+                                <span class="ico-help" title="Release date"><i class="fa fa-question-circle"></i></span>
+                                <div class='input-group date'>
+                                    <input type='text' class="form-control" id="dtpReleaseDate" name="ReleaseDate" value="@Model.ReleaseDate" />
+                                    <span class="input-group-addon open-dtpReleaseDate">
+                                        <span class="glyphicon glyphicon-calendar "></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Intro Video Url</label>
+                            <input type="text" data-val-url="This is not a valid URL." autofocus data-val="true" class="form-control input-validation-error" name="IntroUrl" id="IntroVideoUrl" data-val-required="This field is required" placeholder="Intro Video Url" value="@Model.IntroUrl">
+                            @Html.ValidationMessageFor(m => m.IntroUrl, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea class="form-control" cols="20" data-val="true" data-val-required="This field is required" id="Description" placeholder="Description" name="Description" rows="2">@Model.Description</textarea>
+                            @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger" })
+                        </div>
+
+                        @*<label>Videos</label>
+                            <br>
+                            <div id="TextBoxContainer">
+                                <input type="hidden" id="hdnVidCount" value="@Model.BoxVideos.Count">
+                                @for (int i = 0; i < Model.BoxVideos.Count; i++)
+                                {
+                                    <div id="divTxtBox_@i">
+                                        <input placeholder="Video Url" class="form-control input-validation-error col-md-11 col-lg-11 col-sm-11" data-val="true" data-val-url="This is not a valid URL." id="BoxVideos_+@i+__VideoUrl" name="BoxVideos[@i].VideoUrl" style="width:96%" type="text" value="@Model.BoxVideos[i].VideoUrl">
+                                        <button style="height:34px; width:30px" onclick="RemoveTextBox(this)" class="btn btn-danger btn-xs deleteButtons" data-title="Remove"><span class="glyphicon glyphicon-trash"></span></button>
+                                        <span class="field-validation-valid text-danger" data-valmsg-for="BoxVideos[@i].VideoUrl" data-valmsg-replace="true"></span>
+                                        <br>
+                                    </div>
+                                }
+                            </div>
+                            <br>
+                            <div class="pull-left">
+                                <a onclick="AddTextBox()" class="btn bg-blue">
+                                    <i class="fa fa-plus-square"></i>
+                                    Add More Videos
+                                </a>
+                            </div>*@
+
+
+                        <div class="row" style="margin-top:10px">
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <label>Videos</label>
+                            </div>
+                        </div>
+                        <div id="TextBoxContainer">
+                            @*<input type="hidden" id="hdnVidCount" value="0">*@
+                            @for (int i = 0; i < Model.BoxVideos.Count; i++)
+                            {
+                                <div class="row" style="margin-top: 15px;" id="divTxtBox_@i">
+                                    <fieldset>
+                                        <legend>Box Video</legend>
+                                        <div class="col-md-6 col-lg-6 col-sm-12">
+                                            <label>Url</label>
+                                            <input placeholder="Video Url" pattern="[-a-zA-Z0-9\:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9\:%_\+.~#?&//=]*)" class="form-control input-validation-error" data-val="true" data-val-url="This is not a valid URL." id="BoxVideosUrl_@i" name="BoxVideos[@i].VideoUrl" style="" type="text" value="@Model.BoxVideos[i].VideoUrl" required>
+                                            <span class="field-validation-valid text-danger" data-valmsg-for="BoxVideos[@i].VideoUrl" data-valmsg-replace="true"></span>
+                                        </div>
+                                        <div class="col-md-6 col-lg-6 col-sm-12">
+                                            <label>Title</label>
+                                            <input placeholder="Video Title" class="form-control input-validation-error" data-val="true" data-val-required="Title is Required." id="BoxVideosTitle_@i" name="BoxVideos[@i].Title" style="" type="text" value="@Model.BoxVideos[i].Title" required>
+                                            <span class="field-validation-valid text-danger" data-valmsg-for="BoxVideos[@i].Title" data-valmsg-replace="true"></span>
+                                        </div>
+                                        <div class="col-md-9 col-lg-9 col-sm-10">
+                                            <label>Video Description</label>
+                                            @Html.TextAreaFor(x => x.BoxVideos[@i].Description, new { @class = "form-control", placeholder = "Video Description", id = "BoxVideoDescription" + @i })
+                                            @*@Html.ValidationMessageFor(m => x.BoxVideos[@i].Description, "", new { @class = "text-danger" })*@
+                                        </div>
+                                        <div class="col-md-1 col-lg-2 col-sm-2" style="margin-top:25px;">
+                                            <button style="height:34px; width:30px" onclick="RemoveTextBox(this)" class="btn btn-danger btn-xs deleteButtons" data-title="Remove"><span class="glyphicon glyphicon-trash"></span></button>
+                                        </div>
+                                    </fieldset>
+                                </div>
+                            }
+                        </div>
+                        <div class="pull-left" style="margin-top:20px;">
+                            <a onclick="AddTextBox()" class="btn bg-blue">
+                                <i class="fa fa-plus-square"></i>
+                                Add More Videos
+                            </a>
+                        </div>
+
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-12 col-sm-12 col-xs-12 text-right">
+                            @if (Model.Id == 0)
+                            {
+                                <button class="btn btn-primary" onclick="ClearValidationErrorMessages()" type="reset">Reset</button>
+                            }
+                            <button type="submit" class="btn btn-success">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/bundles/jquery")
+<script>
+    function OnBoxSuccessInsertion() {
+        window.location.href = "@Url.Action("ManageBoxes", "Box")";
+    }
+
+    function GetDynamicTextBox(value) {
+        //var itemCount = parseInt($("#hdnVidCount").val(), 10);
+        //var div = $("<div id=\"divTxtBox_" + itemCount + "\"/>");
+
+
+        //var textBox = $("<input />").attr("placeholder", "Video Url").attr("type", "text").attr("class", "form-control input-validation-error").attr("name", "DynamicTextBox");
+        //textBox.val(value);
+        //div.append("<input placeholder=\"Video Url\" class=\"form-control input-validation-error col-md-11 col-lg-11 col-sm-11\" data-val=\"true\" data-val-url=\"This is not a valid URL.\" id=\"BoxVideos_" + itemCount + "__VideoUrl\" name=\"BoxVideos[" + itemCount + "].VideoUrl\" style=\"width:96%\" type=\"text\" >");
+        ////var button = $("<input />").attr("type", "button").attr("value", "Remove");
+        ////button.attr("onclick", "RemoveTextBox(this)");
+        //div.append("<button style=\"height:34px; width:30px\" onclick=\"RemoveTextBox(this)\" class=\"btn btn-danger btn-xs deleteButtons\" data-title=\"Remove\"><span class=\"glyphicon glyphicon-trash\"></span></button>");
+        //div.append("<span class=\"field-validation-valid text-danger\" data-valmsg-for=\"BoxVideos[" + itemCount + "].VideoUrl\" data-valmsg-replace=\"true\"></span>")
+        //div.append("<br>")
+
+        //$("#hdnVidCount").val((itemCount + 1));
+        //return div;
+
+        var itemCount = $("#TextBoxContainer").children("div").length;
+
+        //var itemCount = parseInt($("#hdnVidCount").val(), 10);
+        //var itemsInDiv = $("#TextBoxContainer").children().length - 1;
+        //if (itemsInDiv > itemCount) {
+        //    itemCount = itemsInDiv;
+        //}
+        //$("#hdnVidCount").val(itemCount + 1);
+        //var oldDiv = $("<div id=\"divTxtBox_" + itemCount + "\"/>");
+
+        var div = '<div class="row" style="margin-top: 15px;" id="divTxtBox_' + itemCount + '">';
+        div += '<div class="col-md-6 col-lg-6 col-sm-12">';
+        div += '<label>Url</label>';
+        div += '<input placeholder="Video Url" class="form-control input-validation-error" pattern="[-a-zA-Z0-9\:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9\:%_\+.~#?&//=]*)"  data-val="true" data-val-url="This is not a valid URL." id="BoxVideos_' + itemCount + '__Url" name="BoxVideos[' + itemCount + '].VideoUrl" style="" type="text" required>';
+        div += '<span class="text-danger field-validation-valid" data-valmsg-for="BoxVideos[' + itemCount +'].VideoUrl" data-valmsg-replace="true"></span></div>'
+        div += '<div class="col-md-6 col-lg-6 col-sm-10">';
+        div += '<label>Title</label>';
+        div += '<input placeholder="Video Title" class="form-control input-validation-error" data-val="true" data-val-required="Title is Required." id="BoxVideos_' + itemCount + '__Title" name="BoxVideos[' + itemCount + '].Title" style="" type="text" required>';
+        div += '<span class="field-validation-valid text-danger" data-valmsg-for="BoxVideos[' + itemCount + '].Title" data-valmsg-replace="true" ></span ></div>';
+        div += '<div class="col-md-9 col-lg-9 col-sm-10"><label> Video Description</label>';
+        div += '<textarea class="form-control valid" cols="20" id="BoxVideoDescription' + itemCount + '" name="BoxVideos[' + itemCount + '].Description" placeholder="Video Description" rows="2"></textarea></div>';
+        div += '<div class="col-md-1 col-lg-1 col-sm-2" style="margin-top:25px;">';
+        div += '<button style="height:34px; width:30px" onclick="RemoveTextBox(this)" class="btn btn-danger btn-xs deleteButtons" data-title="Remove"><span class="glyphicon glyphicon-trash"></span></button>';
+        div += '</div></div>';
+        //oldDiv.append(div);
+        //return div;
+
+        $("#TextBoxContainer").append(div);
+    }
+
+    function AddTextBox() {
+        var div = GetDynamicTextBox("");
+        $("#TextBoxContainer").append(div);
+    }
+
+    function RemoveTextBox(button) {
+        // var itemCount = parseInt($("#hdnVidCount").val(), 10);
+        $(button).parent().parent().parent().remove();
+       // $("#hdnVidCount").val((itemCount - 1));
+
+        var c = 0;
+        $("#TextBoxContainer .row").each(function () {
+            $(this).attr("id", "divTxtBox_" + c)
+            $($(this).find("input")[0]).attr("id", "BoxVideosUrl_" + c).attr("name", "BoxVideos[" + c + "].VideoUrl");
+            $($(this).find("span")[0]).attr("data-valmsg-for", "BoxVideos[" + c + "].VideoUrl");
+
+            $($(this).find("input")[1]).attr("id", "BoxVideosTitle_" + c).attr("name", "BoxVideos[" + c + "].Title");
+            $($(this).find("span")[1]).attr("data-valmsg-for", "BoxVideos[" + c + "].Title");
+
+            $($(this).find("textarea")).attr("name", "BoxVideos[" + c + "].Description").attr("id", "BoxVideoDescription" + c);
+            c++;
+        });
+
+
+    }
+
+    $('.open-dtpReleaseDate').click(function (event) {
+        event.preventDefault();
+        $('#dtpReleaseDate').click();
+    });
+
+    $(function () {
+        $('#dtpReleaseDate').daterangepicker({
+            singleDatePicker: true,
+            showDropdowns: true,
+            locale: {
+                format: 'DD/MM/YYYY'
+            },
+        },
+            function (start, end, label) {
+                var years = moment().diff(start, 'years');
+                //alert("You are " + years + " years old.");
+            });
+    });
+
+    $("#Price").keydown(function (e) {
+        // Allow: backspace, delete, tab, escape, enter and .
+        if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+            // Allow: Ctrl+A, Command+A
+            (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) ||
+            // Allow: home, end, left, right, down, up
+            (e.keyCode >= 35 && e.keyCode <= 40)) {
+            // let it happen, don't do anything
+            return;
+        }
+        // Ensure that it is a number and stop the keypress
+        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+            e.preventDefault();
+        }
+    });
+
+    $("#Price").bind("cut copy paste", function (e) {
+        e.preventDefault();
+    });
+</script>
